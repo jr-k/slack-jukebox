@@ -24,7 +24,12 @@ function SlackConnector(command_handler) {
     // wait 3sec for not getting last message
     setTimeout(function() {
         rtm.on(RTM_EVENTS.MESSAGE, function (message) {
-            //console.log(message)
+            console.log("\n");
+            console.log("RECEING MESSAGE >");
+            console.log(message);
+            console.log("\n");
+            console.log("\n");
+            
             if (channels.length == 0 || channels.indexOf(message.channel) != -1) {
                 // The prefix is the bot's id
                 var prefix = '<@'+id+'>';
@@ -41,6 +46,8 @@ function SlackConnector(command_handler) {
                 };
 
                 if ('undefined' !== typeof text && text.startsWith(prefix)) {
+                    console.log("> Ok for bot");
+                    
                     // Getting the command in good shape
                     var command = text.substr(prefix.length, (text.length - prefix.length)).trim();
                     // Check if their is alias
@@ -48,6 +55,7 @@ function SlackConnector(command_handler) {
 
 
                     if (command.startsWith('install') && 'undefined' === typeof message.subtype) {
+                        console.log("> Command: install");
                         var argsInstall = command.split('install ').pop().split(' ');
 
                         if (argsInstall.length >= 2) {
@@ -70,6 +78,7 @@ function SlackConnector(command_handler) {
                         }
 
                     } else if (command.startsWith('uninstall') && 'undefined' === typeof message.subtype) {
+                        console.log("> Command: uninstall");
                         var argsUninstall = command.split('uninstall ').pop().split(' ');
 
                         if (argsUninstall.length == 2) {
@@ -82,6 +91,7 @@ function SlackConnector(command_handler) {
                         }
 
                     }  else if (command.startsWith('send') && 'undefined' === typeof message.subtype) {
+                        console.log("> Command: send");
                         var argsPlay = command.split('send ').pop().split(' ');
 
                         if (argsPlay.length == 1) {
@@ -92,10 +102,13 @@ function SlackConnector(command_handler) {
                         }
 
                     } else if (command.startsWith('list') && 'undefined' === typeof message.subtype) {
+                        console.log("> Command: list");
                         command_handler.listSamples(botReply);
                     }  else if (command.startsWith('help') && 'undefined' === typeof message.subtype) {
+                        console.log("> Command: help");
                         command_handler.helpForSamples(botReply);
                     } else if (command.startsWith('add') && 'undefined' === typeof message.subtype) {
+                        console.log("> Command: add");
                         var urls = command.split(' add ').pop().split(' ');
                         urls.forEach(function(value) {
                             var url = value.replace('<','').replace('>','');
@@ -121,12 +134,16 @@ function SlackConnector(command_handler) {
                             }
                         })
                     } else if (command == 'play' && 'undefined' === typeof message.subtype) {
+                        console.log("> Command: play");
                         command_handler.play();
                     } else if (command == 'pause' && 'undefined' === typeof message.subtype) {
+                        console.log("> Command: pause");
                         command_handler.pause();
                     } else if (command.startsWith('volume ') && 'undefined' === typeof message.subtype) {
+                        console.log("> Command: volume");
                         command_handler.volume(command.split(' ').pop());
                     } else if (command.startsWith('playing') && 'undefined' === typeof message.subtype) {
+                        console.log("> Command: playing");
                         // ########## CURRENT ##########
                         if ('undefined' !== typeof command_handler.playlist.playing) {
                             rtm.sendMessage("The music currently playing is ''" + command_handler.playlist.playing.sound.title+"'. [" + helper.hmsTimeFormat(item.sound.length) + "]", message.channel);
@@ -134,6 +151,7 @@ function SlackConnector(command_handler) {
                             rtm.sendMessage("No music playing (Set a music with the command 'add')", message.channel);
                         }
                     } else if (command.startsWith('playlist') && 'undefined' === typeof message.subtype) {
+                        console.log("> Command: playlist");
                         // ########## PLAYLIST ##########
                         if (command_handler.playlist.queue.length > 0) {
                             rtm.sendMessage( 'Total Length : [' + helper.hmsTimeFormat(command_handler.playlist.totalLength()) + ']\n' +
@@ -146,8 +164,10 @@ function SlackConnector(command_handler) {
                             rtm.sendMessage("No playlist set (Set a music with the command 'add')", message.channel);
                         }
                     } else if (command.startsWith('playnext') && 'undefined' === typeof message.subtype) {
+                        console.log("> Command: playnext");
                         command_handler.playNext();
                     } else if ('undefined' !== typeof message.subtype && 'message_deleted' == message.subtype) {
+                        console.log("> Command: message_deleted");
                         if (message.previous_message.ts in followed_items) {
                             command_handler.deleteFromPlaylist(followed_items[message.previous_message.ts], function() {
                                 delete followed_items[message.ts];
